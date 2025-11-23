@@ -1,0 +1,24 @@
+:host {
+  .legend {
+    small {
+      font-size: x-small;
+    }
+  }
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+}
+
+.card-footer {
+  overflow: hidden; /* Asegura que el contenido no salga del contenedor */
+}
+
+.pagination {
+  flex-wrap: wrap; /* Permite que el paginador se adapte a dispositivos más pequeños */
+}
+
+.pagination .page-link {
+  white-space: nowrap; /* Evita que los botones de paginación se rompan en varias líneas */
+}

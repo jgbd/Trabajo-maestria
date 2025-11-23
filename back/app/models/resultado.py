@@ -1,0 +1,77 @@
+from typing import List, Optional
+
+from sqlalchemy import DECIMAL, Double, ForeignKeyConstraint, Index, Integer, String, Text
+from sqlalchemy.dialects.mysql import TEXT, VARCHAR
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+import decimal
+from app.database import Base
+
+class Resultados(Base):
+    __tablename__ = 'Resultados'
+    __table_args__ = (
+        ForeignKeyConstraint(['Codigo_Punto_Muestreo'], ['Puntos_Muestreo.Codigo'], name='Resultados_Puntos_Muestreo_FK'),
+        Index('Resultados_Puntos_Muestreo_FK', 'Codigo_Punto_Muestreo')
+    )
+
+    Codigo_Muestra: Mapped[int] = mapped_column(Integer, primary_key=True)
+    Fecha_Toma: Mapped[Optional[str]] = mapped_column(String(26))
+    Tipo_Agua: Mapped[Optional[str]] = mapped_column(String(50))
+    Codigo_Punto_Muestreo: Mapped[Optional[str]] = mapped_column(VARCHAR(100))
+    Resultado_Ph_In_Situ: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Ph_In_Situ: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Color_Aparente_In_Situ: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Color_Aparente_In_Situ: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Turbiedad_In_Situ: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Turbiedad_In_Situ: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Cloro_Residual_Libre_In_Situ: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Cloro_Residual_Libre_In_Situ: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Temperatura_In_Situ: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Temperatura_In_Situ: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Color_Aparente: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Color_Aparente: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Conductividad: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Conductividad: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Ph: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Ph: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Turbiedad: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Turbiedad: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Temperatura: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Temperatura: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Alcalinidad_Total: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Alcalinidad_Total: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Aluminio: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Aluminio: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Cloro_Residual_Libre: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Cloro_Residual_Libre: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Cloruros: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Cloruros: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_COT: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_COT: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Dureza_Calcica: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Dureza_Calcica: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Dureza_Total: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Dureza_Total: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Fosfatos: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Fosfatos: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Manganeso: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Manganeso: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Nitratos: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Nitratos: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Nitritos: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Nitritos: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Sulfatos: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Sulfatos: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Coliformes_Totales: Mapped[Optional[decimal.Decimal]] = mapped_column(Double(asdecimal=True))
+    Diagnostico_Coliformes_Totales: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_E_Coli: Mapped[Optional[decimal.Decimal]] = mapped_column(Double(asdecimal=True))
+    Diagnostico_E_Coli: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Floruros: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Floruros: Mapped[Optional[str]] = mapped_column(String(50))
+    Resultado_Hierro_Total: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Diagnostico_Hierro_Total: Mapped[Optional[str]] = mapped_column(String(50))
+    IRCA_Basico: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    IRCA: Mapped[Optional[decimal.Decimal]] = mapped_column(DECIMAL(5, 2))
+    Nivel_Riesgo: Mapped[Optional[str]] = mapped_column(String(50))
+    Observaciones: Mapped[Optional[str]] = mapped_column(Text)
+
+    Puntos_Muestreo: Mapped[Optional['PuntosMuestreo']] = relationship('PuntosMuestreo', back_populates='Resultados')

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <base href="./" />
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
+  <meta content="alidad del agua Nariño" name="description" />
+  <meta content="Juan Bastidas" name="author" />
+  <meta content="CoreUI,Bootstrap,Admin,Template,Free,Angular,Dashboard,Typescript" name="keyword" />
+  <link href="assets/favicon.ico" rel="icon" type="image/x-icon" />
+
+  <link rel="stylesheet"
+    href="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/themes/df-messenger-default.css">
+  <script src="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js"></script>
+
+  <title>Calidad del agua Nariño</title>
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <app-root>
+    <div class="fade show" style="text-align: center; padding-top: calc(100vh / 2); height: 100vh">
+      <i class="spinner-grow spinner-grow-sm"></i>
+      <span class="m-1">Loading...</span>
+    </div>
+  </app-root>
+  <df-messenger location="us-central1" project-id="prueba-dev-jgbd" agent-id="56f3acaf-afd3-444b-8098-6d24a56385c1"
+    language-code="es" max-query-length="-1">
+    <df-messenger-chat-bubble chat-title="AguaNar">
+    </df-messenger-chat-bubble>
+  </df-messenger>
+
+</body>
+
+</html>
