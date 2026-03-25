@@ -11,7 +11,7 @@ class PuntosMuestreo(Base):
         ForeignKeyConstraint(['Codigo_Vereda'], ['Veredas.Codigo'], name='Puntos_Muestreo_ibfk_1'),
         ForeignKeyConstraint(['Nit_Prestador'], ['Prestadores_Servicios.Nit'], name='Puntos_Muestreo_ibfk_2'),
         Index('Codigo_Vereda', 'Codigo_Vereda'),
-        Index('Nit_Prestador', 'Nit_Prestador')
+        Index('ix_punto_muestreo_nit_prestador', 'Nit_Prestador')
     )
 
     Codigo: Mapped[str] = mapped_column(VARCHAR(100), primary_key=True)

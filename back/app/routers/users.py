@@ -4,12 +4,16 @@ from app.database import get_db
 from app.models.user import User
 from app.schemas.user import UserCreate
 
+from passlib.context import CryptContext
+
 router = APIRouter()
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 @router.post("/")
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
-    print(user.name, user.email, user.password)
-    new_user = User(name=user.name, email=user.email, password=user.password)
+    hashed_password = pwd_context.hash(user.password)
+    new_user = User(name=user.name, email=user.email, password=hashed_password)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -31,7 +35,7 @@ def update_user(user_id: int, user_data: UserCreate, db: Session = Depends(get_d
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    update_data = user_data.dict(exclude_unset=True)
+    update_data = user_data.model_dump(exclude_unset=True)
     for key, value in update_data.items():
         setattr(user, key, value)
     db.commit()
@@ -41,6 +45,8 @@ def update_user(user_id: int, user_data: UserCreate, db: Session = Depends(get_d
 @router.delete("/{user_id}")
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
     db.delete(user)
     db.commit()
     return {"message": "User deleted successfully"}

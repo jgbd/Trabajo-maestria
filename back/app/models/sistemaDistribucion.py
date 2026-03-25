@@ -9,7 +9,7 @@ class SistemasDistriucion(Base):
     __tablename__ = 'Sistemas_Distriucion'
     __table_args__ = (
         ForeignKeyConstraint(['Nit_Prestador'], ['Prestadores_Servicios.Nit'], name='Sistemas_Distriucion_ibfk_1'),
-        Index('Nit_Prestador', 'Nit_Prestador')
+        Index('ix_sistema_distribucion_nit_prestador', 'Nit_Prestador')
     )
 
     Codigo: Mapped[int] = mapped_column(Integer, primary_key=True)

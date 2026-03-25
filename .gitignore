@@ -1,23 +1,111 @@
-# Dependencies
-node_modules/
+# ==================== PYTHON/BACKEND ====================
+# Virtual Environments
 venv/
 .venv/
-__pycache__/
-*.pyc
+env/
+ENV/
 
-# Environment
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Alembic
+alembic/versions/__pycache__/
+
+# ==================== NODE/FRONTEND ====================
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build outputs
+front/dist/
+front/.angular/cache/
+front/out-tsc/
+
+# Testing
+coverage/
+.nyc_output/
+
+# ==================== ENVIRONMENT ====================
 .env
 .env.*
+!.env.example
 
-# IDE
+# ==================== IDE ====================
 .vscode/
 .idea/
-
-# System
+*.swp
+*.swo
+*~
 .DS_Store
-Thumbs.db
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.sublime-project
+.history/
+.ionide/
 
-# Build
+# ==================== SYSTEM ====================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.log
+*.log.*
+
+# ==================== OS ====================
+.AppleDouble
+.LSOverride
+.TemporaryItems
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*~
+
+# ==================== JUPYTER NOTEBOOKS ====================
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ==================== MISC ====================
+.turbo/
 dist/
 build/
-coverage/
