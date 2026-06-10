@@ -104,6 +104,7 @@ Descripcion de directorios frontend:
 - front/src/scss/: estilos globales, tema y ajustes visuales.
 
 ## Despliegue en Cloud Run
+# prueba
 
 El despliegue se plantea con dos servicios independientes en Cloud Run:
 
