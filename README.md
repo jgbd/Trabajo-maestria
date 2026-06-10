@@ -104,12 +104,9 @@ Descripcion de directorios frontend:
 - front/src/scss/: estilos globales, tema y ajustes visuales.
 
 ## Despliegue en Cloud Run
-# prueba
 
-El despliegue se plantea con dos servicios independientes en Cloud Run:
-
-1. Servicio backend: API FastAPI.
-2. Servicio frontend: aplicacion Angular.
+El despliegue recomendado para este repositorio es en un solo servicio Cloud Run
+usando el Dockerfile de la raiz (imagen fullstack: FastAPI + Angular).
 
 ### Prerrequisitos
 
@@ -119,50 +116,47 @@ gcloud config set project PROJECT_ID
 gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
 ```
 
-### 1) Despliegue del backend en Cloud Run
-
-El backend ya incluye Dockerfile en back/, por lo que se puede construir y desplegar como contenedor.
+### 1) Construir y publicar imagen fullstack
 
 ```bash
 # Desde la raiz del repo
-gcloud builds submit back \
-  --tag REGION-docker.pkg.dev/PROJECT_ID/REPO/irca-back:latest
-
-gcloud run deploy irca-back \
-  --image REGION-docker.pkg.dev/PROJECT_ID/REPO/irca-back:latest \
-  --platform managed \
-  --region REGION \
-  --allow-unauthenticated
+gcloud builds submit . \
+  --tag REGION-docker.pkg.dev/PROJECT_ID/REPO/ircaback:latest
 ```
 
-Variables recomendadas para backend en Cloud Run:
-
-- DATABASE_URL
-- SECRET_KEY
-- ALGORITHM
-- ACCESS_TOKEN_EXPIRE_MINUTES
-
-### 2) Despliegue del frontend en Cloud Run
-
-Para frontend se recomienda compilar Angular y servir archivos estaticos con Nginx en un contenedor dedicado.
+### 2) Desplegar servicio Cloud Run
 
 ```bash
-# Desde la raiz del repo
-gcloud builds submit front \
-  --tag REGION-docker.pkg.dev/PROJECT_ID/REPO/irca-front:latest
-
-gcloud run deploy irca-front \
-  --image REGION-docker.pkg.dev/PROJECT_ID/REPO/irca-front:latest \
+gcloud run deploy ircaback \
+  --image REGION-docker.pkg.dev/PROJECT_ID/REPO/ircaback:latest \
   --platform managed \
   --region REGION \
-  --allow-unauthenticated
+  --allow-unauthenticated \
+  --port 8080
 ```
 
-Configuracion recomendada para frontend:
+### 3) Variables de entorno sugeridas
 
-- Ajustar environment.production.ts con la URL publica del servicio backend.
-- Definir CORS en backend para permitir origen del frontend desplegado.
+Para despliegue sin base externa (arranque inmediato):
 
-## Nota de arquitectura
+```bash
+--set-env-vars USE_SQLITE=true,PORT=8080
+```
 
-Al tener servicios separados en Cloud Run, frontend y backend pueden escalar y versionarse de forma independiente.
+Para MySQL en produccion:
+
+```bash
+--set-env-vars USE_SQLITE=false,DB_USER=...,DB_PASSWORD=...,DB_HOST=...,DB_PORT=3306,DB_NAME=...,PORT=8080
+```
+
+### 4) Ver logs de una revision fallida
+
+```bash
+gcloud run revisions logs read REVISION_NAME \
+  --service ircaback \
+  --region REGION \
+  --limit 200
+```
+
+Si una revision vuelve a fallar por puerto, casi siempre el error real aparece en
+estos logs (excepcion en import, variables faltantes o comando de inicio).
