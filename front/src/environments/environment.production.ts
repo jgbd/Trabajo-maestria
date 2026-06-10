@@ -10,7 +10,7 @@ export const environment = {
   production: true,
   
   // Relative API URL - same origin (backend serves frontend)
-  apiUrl: 'https://ircaback-639342137715.northamerica-northeast1.run.app/api',
+  apiUrl: 'https://trabajo-maestria-639342137715.us-central1.run.app/api',
   apiVersion: '1.0.0',
   
   // Admin API key for protected operations (POST/PUT/DELETE)
