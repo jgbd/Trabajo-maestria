@@ -2,9 +2,9 @@ from app.database import Base, engine
 from app.models import user, departamento, municipio, vereda, prestadorServicio, sistemaDistribucion, puntoMuestreo, resultado 
 # from app.routers import users  # Commented out - user management removed from public API
 import app.services
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRouter
 from fastapi.staticfiles import StaticFiles
@@ -101,6 +101,39 @@ async def health_check():
         "service": settings.PROJECT_NAME,
         "version": settings.VERSION
     }
+
+
+# Serve Angular build when available.
+BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_DIR = BASE_DIR / "static"
+INDEX_FILE = STATIC_DIR / "index.html"
+
+if (STATIC_DIR / "assets").exists():
+    app.mount("/assets", StaticFiles(directory=STATIC_DIR / "assets"), name="assets")
+
+
+@app.get("/", include_in_schema=False)
+async def serve_root():
+    if INDEX_FILE.exists():
+        return FileResponse(INDEX_FILE)
+    raise HTTPException(status_code=404, detail="Frontend no disponible")
+
+
+@app.get("/{full_path:path}", include_in_schema=False)
+async def spa_fallback(full_path: str):
+    # Avoid intercepting API and docs paths handled by FastAPI routes.
+    reserved_prefixes = ("api", "docs", "redoc", "openapi.json", "health")
+    if full_path.startswith(reserved_prefixes):
+        raise HTTPException(status_code=404, detail="Ruta no encontrada")
+
+    requested_file = STATIC_DIR / full_path
+    if requested_file.is_file():
+        return FileResponse(requested_file)
+
+    if INDEX_FILE.exists():
+        return FileResponse(INDEX_FILE)
+
+    raise HTTPException(status_code=404, detail="Frontend no disponible")
 
 def start():
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
