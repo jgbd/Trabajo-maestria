@@ -6,7 +6,7 @@ All environment variables are validated at startup.
 """
 
 from pydantic_settings import BaseSettings
-from typing import List
+from typing import List, Optional
 import secrets
 
 
@@ -34,12 +34,12 @@ class Settings(BaseSettings):
     """
     
     # Database Configuration
-    DB_USER: str
-    DB_PASSWORD: str
+    DB_USER: Optional[str] = None
+    DB_PASSWORD: Optional[str] = None
     DB_HOST: str = "localhost"
     DB_PORT: int = 3306
-    DB_NAME: str
-    USE_SQLITE: bool = False
+    DB_NAME: Optional[str] = None
+    USE_SQLITE: bool = True
 
     # Server Configuration
     PORT: int = 8080
@@ -72,7 +72,7 @@ class Settings(BaseSettings):
         Returns:
             SQLAlchemy-compatible database URL
         """
-        if self.USE_SQLITE:
+        if self.USE_SQLITE or not all([self.DB_USER, self.DB_PASSWORD, self.DB_NAME]):
             return "sqlite:///./irca_data.db"
         return (
             f"mysql+pymysql://{self.DB_USER}:{self.DB_PASSWORD}"
