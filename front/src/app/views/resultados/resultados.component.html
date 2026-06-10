@@ -1,0 +1,111 @@
+<c-row>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>Resultados Detallados de Análisis de Agua</strong>
+      </c-card-header>
+      <c-card-body>
+        <!-- Loading spinner -->
+        <div *ngIf="loading" class="text-center py-5">
+          <c-spinner color="primary"></c-spinner>
+          <p class="mt-3 text-muted">Cargando resultados...</p>
+        </div>
+
+        <!-- Error alert -->
+        <c-alert *ngIf="error && !loading" color="danger" [dismissible]="true">
+          {{ error }}
+        </c-alert>
+
+        <!-- Results table -->
+        <div *ngIf="!loading && !error && resultados.length > 0" class="table-responsive">
+          <table cTable [hover]="true" [striped]="true">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Municipio</th>
+                <th>Punto</th>
+                <th>IRCA</th>
+                <th>Nivel de Riesgo</th>
+                <th>Color</th>
+                <th>Turbiedad</th>
+                <th>pH</th>
+                <th>Cloro</th>
+                <th>Coliformes</th>
+                <th>E. coli</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let resultado of resultados">
+                <td>{{ formatDate(resultado.fecha_Analisis) }}</td>
+                <td>{{ resultado.municipio || '-' }}</td>
+                <td>{{ resultado.nombre_Punto || '-' }}</td>
+                <td>
+                  <strong 
+                    [style.color]="IRCARiskThresholds.getColor(resultado.IRCA || 0)"
+                  >
+                    {{ formatValue(resultado.IRCA) }}
+                  </strong>
+                </td>
+                <td>
+                  <c-badge [color]="getRiskBadgeColor(resultado.nivel_Riesgo)">
+                    {{ resultado.nivel_Riesgo || '-' }}
+                  </c-badge>
+                </td>
+                <td>
+                  {{ formatValue(resultado.resultado_Color_Aparente) }}
+                  <small class="text-muted d-block">
+                    {{ resultado.diagnostico_Color_Aparente || '' }}
+                  </small>
+                </td>
+                <td>
+                  {{ formatValue(resultado.resultado_Turbiedad) }}
+                  <small class="text-muted d-block">
+                    {{ resultado.diagnostico_Turbiedad || '' }}
+                  </small>
+                </td>
+                <td>
+                  {{ formatValue(resultado.resultado_pH) }}
+                  <small class="text-muted d-block">
+                    {{ resultado.diagnostico_pH || '' }}
+                  </small>
+                </td>
+                <td>
+                  {{ formatValue(resultado.resultado_Cloro_Residual_Libre) }}
+                  <small class="text-muted d-block">
+                    {{ resultado.diagnostico_Cloro_Residual_Libre || '' }}
+                  </small>
+                </td>
+                <td>
+                  {{ formatValue(resultado.resultado_Coliformes_Totales) }}
+                  <small class="text-muted d-block">
+                    {{ resultado.diagnostico_Coliformes_Totales || '' }}
+                  </small>
+                </td>
+                <td>
+                  {{ formatValue(resultado.resultado_Escherichia_coli) }}
+                  <small class="text-muted d-block">
+                    {{ resultado.diagnostico_Escherichia_coli || '' }}
+                  </small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- No results message -->
+        <c-alert *ngIf="!loading && !error && resultados.length === 0" color="info">
+          No se encontraron resultados.
+        </c-alert>
+
+        <!-- Pagination -->
+        <app-pagination
+          *ngIf="paginationMeta && !loading && !error"
+          [meta]="paginationMeta"
+          [maxVisible]="7"
+          [showInfo]="true"
+          (pageChange)="onPageChange($event)"
+        ></app-pagination>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

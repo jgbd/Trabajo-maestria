@@ -23,7 +23,9 @@ import {
 } from '@coreui/angular';
 import { ChartjsComponent } from '@coreui/angular-chartjs';
 
-import { DashboardDataService } from '../../services/dashboard-data.service';
+import { DashboardDataService, MunicipioData } from '../../services/dashboard-data.service';
+import { IRCARiskThresholds } from '../../services/irca-constants';
+import { RateLimitService } from '../../services/rate-limit.service';
 import * as L from 'leaflet';
 import 'leaflet.heat';
 
@@ -53,6 +55,8 @@ interface municipio {
 export class DashboardComponent implements OnInit {
   readonly #dashboardDataService: DashboardDataService =
     inject(DashboardDataService);
+  readonly #rateLimitService: RateLimitService = inject(RateLimitService);
+  
   chartData!: ChartData;
   chartOptions!: ChartOptions;
   chartType: ChartType = 'line';
@@ -61,10 +65,14 @@ export class DashboardComponent implements OnInit {
   datasource: any[] = [];
   anios: any[] = [];
   Math: any = Math; // Para usar Math en la plantilla
+  IRCARiskThresholds = IRCARiskThresholds; // For template access
 
   currentPage: number = 1; // Página actual
   itemsPerPage: number = 5; // Cantidad de filas por página
   paginatedData: any[] = []; // Datos filtrados para la página actual
+  
+  // Rate limit display
+  rateLimitInfo$ = this.#rateLimitService.rateLimit$;
 
   private mapa!: L.Map;
 
@@ -77,17 +85,36 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.#dashboardDataService.getDashboardData().subscribe((data: any) => {
-      this.setupChartData(data);
-      this.setupChartOptions();
-      this.setupTableData(data);
-      this.iniciarMapa(data);
+    // Load dashboard data with error handling (handled by interceptor)
+    this.#dashboardDataService.getDashboardData().subscribe({
+      next: (data: MunicipioData[]) => {
+        if (data && data.length > 0) {
+          this.setupChartData(data);
+          this.setupChartOptions();
+          this.setupTableData(data);
+          this.iniciarMapa(data);
+        }
+      },
+      error: (error) => {
+        console.error('Failed to load dashboard data:', error);
+        // Error toast will be shown by interceptor
+      }
     });
+
+    // Load municipalities list
     this.#dashboardDataService
       .getMunicipios()
-      .subscribe((data: municipio[]) => {
-        this.municipios = data;
-        this.form.patchValue({ municipio: data[0].Codigo });
+      .subscribe({
+        next: (data: municipio[]) => {
+          this.municipios = data;
+          if (data.length > 0) {
+            this.form.patchValue({ municipio: data[0].Codigo });
+          }
+        },
+        error: (error) => {
+          console.error('Failed to load municipalities:', error);
+          // Error toast will be shown by interceptor
+        }
       });
   }
 
@@ -98,13 +125,19 @@ export class DashboardComponent implements OnInit {
     );
 
     // Crea un dataset por cada municipio
-    const datasets = municipios.map((municipio: any) => ({
-      label: municipio.municipio, // Nombre del municipio
-      data: municipio.resultados.map((resultado: any) => resultado.irca), // Valores IRCA
-      borderColor: this.getRandomColor(), // Genera colores únicos
-      backgroundColor: 'rgba(0, 0, 0, 0)', // Fondo transparente
-      borderWidth: 2,
-    }));
+    // Use IRCA risk colors based on average IRCA value
+    const datasets = municipios.map((municipio: any) => {
+      const avgIRCA = municipio.resultados.reduce((sum: number, r: any) => sum + r.irca, 0) / municipio.resultados.length;
+      const color = IRCARiskThresholds.getColor(avgIRCA);
+      
+      return {
+        label: municipio.municipio, // Nombre del municipio
+        data: municipio.resultados.map((resultado: any) => resultado.irca), // Valores IRCA
+        borderColor: color, // Color based on IRCA risk level
+        backgroundColor: 'rgba(0, 0, 0, 0)', // Fondo transparente
+        borderWidth: 2,
+      };
+    });
 
     this.chartData = {
       labels: labels, // Ejes X: los años
@@ -301,19 +334,20 @@ export class DashboardComponent implements OnInit {
       const { anioInicio, anioFin, municipio } = this.form.value;
       this.#dashboardDataService
         .getDashboardData(anioInicio, anioFin, municipio)
-        .subscribe((data: any) => {
-          this.setupChartData(data);
-          this.setupChartOptions();
-          this.setupTableData(data);
-          this.iniciarMapa(data);
+        .subscribe({
+          next: (data: MunicipioData[]) => {
+            if (data && data.length > 0) {
+              this.setupChartData(data);
+              this.setupChartOptions();
+              this.setupTableData(data);
+              this.iniciarMapa(data);
+            }
+          },
+          error: (error) => {
+            console.error('Failed to filter dashboard data:', error);
+            // Error toast will be shown by interceptor
+          }
         });
     }
-  }
-  // Método para generar colores aleatorios
-  private getRandomColor(): string {
-    const r = Math.floor(Math.random() * 255);
-    const g = Math.floor(Math.random() * 255);
-    const b = Math.floor(Math.random() * 255);
-    return `rgba(${r}, ${g}, ${b}, 1)`;
   }
 }

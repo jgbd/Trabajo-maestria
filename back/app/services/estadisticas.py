@@ -1,4 +1,4 @@
-from sqlalchemy import func, case, select
+from sqlalchemy import func, case, select, extract
 from sqlalchemy.orm import Session, aliased
 from app.models.departamento import Departamentos
 from app.models.municipio import Municipios
@@ -38,7 +38,7 @@ def obtener_resumen_irca(db: Session, anio_inicio, anio_fin, codigo_municipio):
             m.Nombre.label("municipio"),
             m.Latitud.label("lat"),
             m.Longitud.label("lng"),
-            func.year(r.Fecha_Toma).label("anio"),
+            extract('year', r.Fecha_Toma).label("anio"),
             func.avg(r.IRCA).label("irca"),
             case(
                 (func.avg(r.IRCA) > 80, "INVIABLE SANITARIAMENTE"),
@@ -55,18 +55,18 @@ def obtener_resumen_irca(db: Session, anio_inicio, anio_fin, codigo_municipio):
         .join(r, r.Codigo_Punto_Muestreo == pm.Codigo
         ).
         filter(
-            func.year(r.Fecha_Toma).between(anio_inicio, anio_fin),
+            extract('year', r.Fecha_Toma).between(anio_inicio, anio_fin),
             m.Codigo == codigo_municipio if codigo_municipio else True
         )
         .group_by(
             m.Nombre,
             m.Latitud,
             m.Longitud,
-            func.year(r.Fecha_Toma)
+            extract('year', r.Fecha_Toma)
         )
         .order_by(
             m.Nombre,
-            func.year(r.Fecha_Toma)
+            extract('year', r.Fecha_Toma)
         )
     )
 

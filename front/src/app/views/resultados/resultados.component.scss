@@ -1,0 +1,17 @@
+// Resultados component styles
+.table-responsive {
+  font-size: 0.9rem;
+  
+  th {
+    white-space: nowrap;
+    font-weight: 600;
+  }
+  
+  td {
+    vertical-align: middle;
+    
+    small {
+      font-size: 0.75rem;
+    }
+  }
+}

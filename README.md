@@ -1,268 +1,167 @@
 # Proyecto IRCA - Monorepo
 
-Monorepo que contiene tanto el backend como el frontend para el sistema de gestión y análisis de datos de calidad de agua IRCA.
+Este repositorio contiene dos aplicaciones del sistema IRCA:
 
-## 📋 Estructura del Proyecto
+1. Backend en FastAPI para logica de negocio, API y persistencia.
+2. Frontend en Angular para visualizacion, gestion y consumo de la API.
 
-```
+## Estructura General
+
+```text
 .
-├── back/              # Backend (Python/FastAPI)
-│   ├── app/          # Aplicación principal
-│   ├── tests/        # Tests unitarios
-│   ├── alembic/      # Migraciones de base de datos
-│   ├── pyproject.toml # Configuración y dependencias
-│   └── alembic.ini   # Configuración de Alembic
-│
-├── front/            # Frontend (Angular)
-│   ├── src/          # Código fuente
-│   ├── package.json  # Dependencias npm
-│   └── angular.json  # Configuración de Angular
-│
-└── README.md         # Este archivo
+|-- back/
+|-- front/
+|-- build.sh
+`-- README.md
 ```
 
-## 🚀 Backend (Python/FastAPI)
+## Proyecto Backend (FastAPI)
 
-### Descripción
-API REST construida con **FastAPI** para gestionar:
-- Usuarios y autenticación
-- Departamentos, municipios y veredas
-- Puntos de muestreo
-- Resultados de análisis de calidad de agua
-- Estadísticas y reportes
-- Modelos de clasificación e predicción IRCA
+Servicio API responsable de autenticacion, entidades del dominio IRCA, estadisticas y prediccion.
 
-### Tecnologías
-- **FastAPI**: Framework web moderno y rápido
-- **SQLAlchemy**: ORM para base de datos
-- **Alembic**: Migraciones de base de datos
-- **Machine Learning**: Modelos IRCA integrados
+### Arbol de directorios del backend
 
-### Estructura
-- `/app/main.py` - Punto de entrada de la aplicación
-- `/app/database.py` - Configuración de la base de datos
-- `/app/models/` - Modelos de datos (SQLAlchemy)
-- `/app/schemas/` - Esquemas de validación (Pydantic)
-- `/app/routers/` - Rutas/endpoints de la API
-- `/app/services/` - Lógica de negocio
-- `/app/llms/` - Modelos de Machine Learning (Jupyter Notebooks)
+```text
+back/
+|-- alembic/
+|   `-- versions/
+|-- app/
+|   |-- core/
+|   |-- llms/
+|   |   `-- notebooks/
+|   |       |-- experimentos/
+|   |       `-- exploracion/
+|   |-- models/
+|   |-- routers/
+|   |-- schemas/
+|   `-- services/
+`-- tests/
+```
+Descripcion de directorios backend:
 
-### Requisitos
-- Python 3.10+
-- PostgreSQL o SQLite
-- pip o conda
+- back/alembic/: configuracion y scripts de migraciones de base de datos.
+- back/alembic/versions/: historial de migraciones versionadas.
+- back/app/: codigo principal de la API FastAPI.
+- back/app/core/: configuracion central, seguridad y utilidades transversales.
+- back/app/llms/: artefactos y recursos de modelos de prediccion.
+- back/app/llms/notebooks/: notebooks para exploracion y experimentacion.
+- back/app/models/: modelos ORM de las entidades de dominio.
+- back/app/routers/: endpoints HTTP agrupados por modulo funcional.
+- back/app/schemas/: esquemas de validacion y serializacion de datos.
+- back/app/services/: logica de negocio desacoplada de los routers.
+- back/tests/: pruebas automatizadas del backend.
 
-### Instalación y ejecución
+## Proyecto Frontend (Angular)
+
+Aplicacion web para consumir la API de IRCA, mostrar dashboard, vistas de datos, formularios, tablas y graficos.
+
+### Arbol de directorios del frontend
+
+```text
+front/
+`-- src/
+  |-- app/
+  |   |-- components/
+  |   |-- icons/
+  |   |-- interceptors/
+  |   |-- layout/
+  |   |   `-- default-layout/
+  |   |-- models/
+  |   |-- services/
+  |   `-- views/
+  |       |-- base/
+  |       |-- buttons/
+  |       |-- charts/
+  |       |-- dashboard/
+  |       |-- forms/
+  |       `-- icons/
+  |-- assets/
+  |   |-- brand/
+  |   `-- images/
+  |       `-- avatars/
+  |-- components/
+  |   |-- docs-callout/
+  |   |-- docs-example/
+  |   `-- docs-link/
+  |-- environments/
+  `-- scss/
+```
+Descripcion de directorios frontend:
+
+- front/src/: codigo fuente principal de la aplicacion Angular.
+- front/src/app/: modulos de aplicacion, vistas, componentes y servicios.
+- front/src/app/components/: componentes reutilizables del dominio de la app.
+- front/src/app/icons/: iconografia y recursos visuales de UI.
+- front/src/app/interceptors/: interceptores HTTP para errores y limites.
+- front/src/app/layout/: estructura visual general de la aplicacion.
+- front/src/app/layout/default-layout/: plantilla base usada por las vistas.
+- front/src/app/models/: interfaces y modelos de datos del frontend.
+- front/src/app/services/: consumo de API y servicios de estado/utilidad.
+- front/src/app/views/: paginas o pantallas principales.
+- front/src/assets/: recursos estaticos como imagenes y marca.
+- front/src/components/: componentes compartidos y utilitarios del template.
+- front/src/environments/: variables de entorno por ambiente.
+- front/src/scss/: estilos globales, tema y ajustes visuales.
+
+## Despliegue en Cloud Run
+
+El despliegue se plantea con dos servicios independientes en Cloud Run:
+
+1. Servicio backend: API FastAPI.
+2. Servicio frontend: aplicacion Angular.
+
+### Prerrequisitos
 
 ```bash
-# Navegar a la carpeta del backend
-cd back/
-
-# Crear ambiente virtual
-python -m venv venv
-
-# Activar el ambiente virtual
-source venv/bin/activate  # En Linux/Mac
-# o
-venv\Scripts\activate  # En Windows
-
-# Instalar dependencias
-pip install -e .
-
-# Configurar variables de entorno
-cp .env.example .env  # Si existe
-
-# Ejecutar migraciones de base de datos
-alembic upgrade head
-
-# Iniciar servidor
-uvicorn app.main:app --reload
+gcloud auth login
+gcloud config set project PROJECT_ID
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
 ```
 
-La API estará disponible en `http://localhost:8000`
-Documentación interactiva (Swagger): `http://localhost:8000/docs`
+### 1) Despliegue del backend en Cloud Run
 
-### Testing
-```bash
-pytest tests/
-```
-
----
-
-## 🎨 Frontend (Angular)
-
-### Descripción
-Interfaz web moderna construida con **Angular** que proporciona:
-- Dashboard de estadísticas
-- Gestión de datos de puntos de muestreo
-- Visualización de resultados de análisis
-- Gráficos y reportes
-- Mapas interactivos
-- Autenticación de usuarios
-
-### Tecnologías
-- **Angular 17+**: Framework frontend
-- **TypeScript**: Lenguaje de programación
-- **SCSS**: Estilos avanzados
-- **Components**: Componentes reutilizables
-- **Services**: Servicios para consumir API
-- **Routing**: Navegación entre vistas
-
-### Estructura
-- `/src/app/` - Componentes y lógica de la aplicación
-- `/src/app/views/` - Páginas principales
-- `/src/app/components/` - Componentes reutilizables
-- `/src/app/services/` - Servicios (consumo de API)
-- `/src/assets/` - Imágenes, fonts, etc.
-- `/src/scss/` - Estilos globales y temas
-
-### Requisitos
-- Node.js 18+ y npm
-- Angular CLI (opcional pero recomendado)
-
-### Instalación y ejecución
+El backend ya incluye Dockerfile en back/, por lo que se puede construir y desplegar como contenedor.
 
 ```bash
-# Navegar a la carpeta del frontend
-cd front/
+# Desde la raiz del repo
+gcloud builds submit back \
+  --tag REGION-docker.pkg.dev/PROJECT_ID/REPO/irca-back:latest
 
-# Instalar dependencias
-npm install
-
-# Iniciar servidor de desarrollo
-npm start
-# o
-ng serve
+gcloud run deploy irca-back \
+  --image REGION-docker.pkg.dev/PROJECT_ID/REPO/irca-back:latest \
+  --platform managed \
+  --region REGION \
+  --allow-unauthenticated
 ```
 
-La aplicación estará disponible en `http://localhost:4200`
+Variables recomendadas para backend en Cloud Run:
 
-### Build para producción
-```bash
-npm run build
-# o
-ng build --configuration production
-```
+- DATABASE_URL
+- SECRET_KEY
+- ALGORITHM
+- ACCESS_TOKEN_EXPIRE_MINUTES
 
-### Testing
-```bash
-npm test
-# o
-ng test
-```
+### 2) Despliegue del frontend en Cloud Run
 
----
-
-## 🔄 Flujo de Desarrollo
-
-### Configuración inicial completa
+Para frontend se recomienda compilar Angular y servir archivos estaticos con Nginx en un contenedor dedicado.
 
 ```bash
-# 1. Clonar el repositorio
-git clone <repo-url>
-cd proyectos
+# Desde la raiz del repo
+gcloud builds submit front \
+  --tag REGION-docker.pkg.dev/PROJECT_ID/REPO/irca-front:latest
 
-# 2. Configurar Backend
-cd back/
-python -m venv venv
-source venv/bin/activate
-pip install -e .
-alembic upgrade head
-# Configurar variables de entorno en .env
-
-# 3. En otra terminal, configurar Frontend
-cd front/
-npm install
-
-# 4. En una terminal, ejecutar Backend
-cd back/
-source venv/bin/activate
-uvicorn app.main:app --reload
-
-# 5. En otra terminal, ejecutar Frontend
-cd front/
-npm start
+gcloud run deploy irca-front \
+  --image REGION-docker.pkg.dev/PROJECT_ID/REPO/irca-front:latest \
+  --platform managed \
+  --region REGION \
+  --allow-unauthenticated
 ```
 
-## 📝 Variables de Entorno
+Configuracion recomendada para frontend:
 
-### Backend (`back/.env`)
-```
-DATABASE_URL=postgresql://user:password@localhost/irca_db
-# o para SQLite:
-DATABASE_URL=sqlite:///./irca.db
+- Ajustar environment.production.ts con la URL publica del servicio backend.
+- Definir CORS en backend para permitir origen del frontend desplegado.
 
-SECRET_KEY=your-secret-key-here
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-```
+## Nota de arquitectura
 
-### Frontend (`front/environment.ts`)
-```typescript
-export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:8000/api'
-};
-```
-
-## 🗄️ Base de Datos
-
-Modelos principales:
-- **User**: Usuarios del sistema
-- **Departamento**: Divisiones administrativas
-- **Municipio**: Municipios dentro de departamentos
-- **Vereda**: Veredas dentro de municipios
-- **PuntoMuestreo**: Puntos de recolección de datos
-- **Resultado**: Resultados de análisis de calidad de agua
-- **SistemaDistribucion**: Sistemas de distribución de agua
-- **PrestadorServicio**: Entidades prestadoras de servicios
-
-Las migraciones se encuentran en `/back/alembic/versions/`
-
-## 🔐 Autenticación
-
-El sistema utiliza JWT (JSON Web Tokens) para autenticación:
-1. El usuario se autentica en el frontend
-2. El backend retorna un token acceso
-3. El frontend incluye el token en las solicitudes subsecuentes
-4. El backend valida el token y retorna los recursos
-
-## 📊 Modelos de Machine Learning
-
-En `/back/app/llms/` se encuentran los modelos IRCA:
-- `model_irca_clasification.ipynb` - Clasificación de calidad de agua
-- `model_irca_precition.ipynb` - Predicción de índices IRCA
-- `model_irca.py` - Implementación de modelos en producción
-- `model_irca_experimentos.ipynb` - Experimentación con modelos
-
-## 🐛 Troubleshooting
-
-### Backend no conecta a la base de datos
-- Verificar que PostgreSQL/SQLite esté corriendo
-- Revisar la conexión en las variables de entorno
-- Ejecutar migraciones: `alembic upgrade head`
-
-### Frontend no conecta con API
-- Verificar que el backend esté ejecutándose en `http://localhost:8000`
-- Revisar la URL de API en `src/environments/environment.ts`
-- Revisar la consola del navegador para errores CORS
-
-### Problemas con dependencias Python
-- Eliminar y recrear el virtual environment
-- Ejecutar: `pip install --upgrade pip setuptools wheel`
-- Reinstalar: `pip install -e .`
-
-## 📚 Documentación Adicional
-
-- **API Docs**: `http://localhost:8000/docs` (Swagger UI)
-- **ReDoc**: `http://localhost:8000/redoc` (Documentación alternativa)
-- **Angular Docs**: https://angular.io/docs
-- **FastAPI Docs**: https://fastapi.tiangolo.com/
-
-## 📧 Contacto y Soporte
-
-Para reportar problemas o sugerencias, contactar al equipo de desarrollo.
-
----
-
-**Última actualización**: Marzo 2026
+Al tener servicios separados en Cloud Run, frontend y backend pueden escalar y versionarse de forma independiente.

@@ -1,6 +1,6 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
@@ -13,6 +13,10 @@ import {
 import { DropdownModule, SidebarModule } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
 import { routes } from './app.routes';
+
+// Phase 1 interceptors
+import { rateLimitInterceptor } from './interceptors/rate-limit.interceptor';
+import { errorHandlingInterceptor } from './interceptors/error-handling.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -31,6 +35,12 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(SidebarModule, DropdownModule),
     IconSetService,
     provideAnimationsAsync(),
-    provideHttpClient()
+    // HTTP client with Phase 1 interceptors
+    provideHttpClient(
+      withInterceptors([
+        errorHandlingInterceptor,  // Must be first to catch all errors
+        rateLimitInterceptor       // Tracks rate limit headers
+      ])
+    )
   ]
 };

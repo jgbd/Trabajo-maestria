@@ -1,9 +1,30 @@
+"""
+Resultados Service
+
+Handles water quality test results data with pagination support.
+"""
 
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from app.models.resultado import Resultados
+from app.core.pagination import PaginationParams
 
-def get_resultados(db: Session):
+
+def get_resultados(db: Session, pagination: PaginationParams):
+    """
+    Get paginated list of water quality test results.
+    
+    Returns detailed results including all water quality parameters.
+    IMPORTANT: This endpoint returns large amounts of data and must use pagination.
+    
+    Args:
+        db: Database session
+        pagination: Pagination parameters (page, page_size)
+        
+    Returns:
+        Tuple of (results_list, total_count)
+    """
+    # Build the query
     query = db.query(
         func.coalesce(Resultados.Resultado_Color_Aparente, Resultados.Resultado_Color_Aparente_In_Situ)
             .label("resultado_Color_Aparente"),
@@ -51,11 +72,17 @@ def get_resultados(db: Session):
         Resultados.Diagnostico_Hierro_Total,
         Resultados.IRCA,
         Resultados.Nivel_Riesgo
-    ).all()
+    )
     
+    # Get total count before pagination
+    total = query.count()
+    
+    # Apply pagination
+    paginated_query = query.offset(pagination.skip).limit(pagination.limit).all()
+    
+    # Convert to dictionary list
     resultados = []
-    
-    for row in query:
+    for row in paginated_query:
         resultado = {
             "resultado_Color_Aparente": row.resultado_Color_Aparente,
             "diagnostico_Color_Aparente": row.diagnostico_Color_Aparente,
@@ -97,4 +124,5 @@ def get_resultados(db: Session):
             "nivel_Riesgo": row.Nivel_Riesgo
         }
         resultados.append(resultado)
-    return resultados
+    
+    return resultados, total

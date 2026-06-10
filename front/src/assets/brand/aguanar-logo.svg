@@ -1,0 +1,35 @@
+<svg width="180" height="40" viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gota de agua con onda -->
+  <defs>
+    <linearGradient id="waterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3399ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0066cc;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Gota de agua principal -->
+  <path d="M 20 8 C 20 8 12 18 12 24 C 12 28.4 15.6 32 20 32 C 24.4 32 28 28.4 28 24 C 28 18 20 8 20 8 Z" 
+        fill="url(#waterGradient)" stroke="white" stroke-width="1.5"/>
+  
+  <!-- Onda interior de la gota -->
+  <path d="M 16 24 Q 18 22 20 24 Q 22 26 24 24" 
+        stroke="white" stroke-width="1.5" fill="none" opacity="0.6"/>
+  
+  <!-- Pequeñas gotas arriba -->
+  <circle cx="14" cy="6" r="2" fill="#66b3ff" opacity="0.8"/>
+  <circle cx="26" cy="6" r="2" fill="#66b3ff" opacity="0.8"/>
+  
+  <!-- Texto "AguaNar" -->
+  <text x="38" y="26" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white">
+    Agua
+  </text>
+  <text x="38" y="26" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white">
+    <tspan x="38" dy="0">Agua</tspan>
+    <tspan fill="#3399ff">Nar</tspan>
+  </text>
+  
+  <!-- Subtítulo -->
+  <text x="38" y="34" font-family="Arial, sans-serif" font-size="8" fill="#99ccff" opacity="0.9">
+    Calidad del Agua
+  </text>
+</svg>

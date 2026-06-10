@@ -10,6 +10,20 @@ export const navItems: INavData[] = [
       text: 'NEW'
     }
   },
+  {
+    name: 'Resultados Detallados',
+    url: '/resultados',
+    iconComponent: { name: 'cil-list' }
+  },
+  {
+    name: 'Predicción IRCA',
+    url: '/prediccion',
+    iconComponent: { name: 'cil-calculator' },
+    badge: {
+      color: 'success',
+      text: 'ML'
+    }
+  },
   // {
   //   title: true,
   //   name: 'Theme'

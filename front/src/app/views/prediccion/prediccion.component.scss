@@ -1,0 +1,44 @@
+.text-center {
+  text-align: center;
+}
+
+c-alert {
+  margin-bottom: 1rem;
+}
+
+.display-4 {
+  font-size: 3.5rem;
+  font-weight: 300;
+  line-height: 1.2;
+}
+
+c-progress {
+  height: 2rem;
+  font-size: 1rem;
+}
+
+c-badge {
+  &.me-2 {
+    margin-right: 0.5rem;
+  }
+}
+
+form {
+  label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  input[type="number"] {
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  small.text-danger {
+    display: block;
+    margin-top: 0.25rem;
+  }
+}

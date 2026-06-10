@@ -1,0 +1,40 @@
+# Jupyter Notebook
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Datos temporales
+*.csv
+*.xlsx
+*.json
+!requirements.json
+
+# Modelos temporales (NO ignorar el modelo final)
+*.pkl
+*.pickle
+# ¡Importante! NO ignorar modelo_irca_best.joblib
+!modelo_irca_best.joblib
+!**/modelo_irca_best.joblib
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
