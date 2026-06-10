@@ -10,6 +10,7 @@ from fastapi.routing import APIRouter
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 import uvicorn
+from sqlalchemy.exc import SQLAlchemyError
 
 # NEW IMPORTS for Phase 1
 from slowapi import _rate_limit_exceeded_handler
@@ -18,9 +19,6 @@ from app.core.rate_limiter import limiter, rate_limit_exceeded_handler
 from app.core.config import settings
 
 from app.routers import estadisticas, municipios, prediccion
-
-# Crear las tablas en la base de datos al iniciar el programa
-Base.metadata.create_all(bind=engine)
 
 # Inicialización del servidor FastAPI con configuración
 app = FastAPI(
@@ -70,6 +68,14 @@ api_router.include_router(municipios.router, prefix="/municipios", tags=["munici
 api_router.include_router(prediccion.router, tags=["prediccion"])
 
 app.include_router(api_router)
+
+
+@app.on_event("startup")
+async def create_tables_on_startup():
+    try:
+        Base.metadata.create_all(bind=engine)
+    except SQLAlchemyError as exc:
+        print(f"No se pudieron crear las tablas al iniciar: {exc}")
 
 # ============================================================================
 # Serve Static Files (Angular Frontend)
@@ -136,5 +142,5 @@ async def spa_fallback(full_path: str):
     raise HTTPException(status_code=404, detail="Frontend no disponible")
 
 def start():
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
-    print(f"Servidor {settings.PROJECT_NAME} iniciado en http://localhost:8000")
+    uvicorn.run("app.main:app", host="0.0.0.0", port=settings.PORT, reload=True)
+    print(f"Servidor {settings.PROJECT_NAME} iniciado en http://localhost:{settings.PORT}")

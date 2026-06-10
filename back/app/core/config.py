@@ -40,6 +40,9 @@ class Settings(BaseSettings):
     DB_PORT: int = 3306
     DB_NAME: str
     USE_SQLITE: bool = False
+
+    # Server Configuration
+    PORT: int = 8080
     
     # Security Configuration
     ADMIN_API_KEY: str = "change-this-in-production"  # Will be overridden by .env
