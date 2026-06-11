@@ -143,10 +143,10 @@ Para despliegue sin base externa (arranque inmediato):
 --set-env-vars USE_SQLITE=true,PORT=8080
 ```
 
-Para MySQL en produccion:
+Para PostgreSQL en produccion:
 
 ```bash
---set-env-vars USE_SQLITE=false,DB_USER=...,DB_PASSWORD=...,DB_HOST=...,DB_PORT=3306,DB_NAME=...,PORT=8080
+--set-env-vars USE_SQLITE=false,DB_USER=...,DB_PASSWORD=...,DB_HOST=...,DB_PORT=5432,DB_NAME=...,PORT=8080
 ```
 
 ### 4) Ver logs de una revision fallida

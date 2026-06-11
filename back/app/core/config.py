@@ -8,6 +8,7 @@ All environment variables are validated at startup.
 from pydantic_settings import BaseSettings
 from typing import List, Optional
 import secrets
+from sqlalchemy.engine import URL
 
 
 class Settings(BaseSettings):
@@ -34,12 +35,12 @@ class Settings(BaseSettings):
     """
     
     # Database Configuration
-    DB_USER: Optional[str] = None
-    DB_PASSWORD: Optional[str] = None
-    DB_HOST: str = "localhost"
-    DB_PORT: int = 3306
-    DB_NAME: Optional[str] = None
-    USE_SQLITE: bool = True
+    DB_USER: Optional[str] = "postgres.oekjyixpleaxevplbnlh"
+    DB_PASSWORD: Optional[str] = "PosttJgIr19"
+    DB_HOST: str = "aws-1-us-east-2.pooler.supabase.com"
+    DB_PORT: int = 5432
+    DB_NAME: Optional[str] = "postgres"
+    USE_SQLITE: bool = False
 
     # Server Configuration
     PORT: int = 8080
@@ -74,9 +75,13 @@ class Settings(BaseSettings):
         """
         if self.USE_SQLITE or not all([self.DB_USER, self.DB_PASSWORD, self.DB_NAME]):
             return "sqlite:///./irca_data.db"
-        return (
-            f"mysql+pymysql://{self.DB_USER}:{self.DB_PASSWORD}"
-            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        return URL.create(
+            "postgresql+psycopg2",
+            username=self.DB_USER,
+            password=self.DB_PASSWORD,
+            host=self.DB_HOST,
+            port=self.DB_PORT,
+            database=self.DB_NAME,
         )
     
     class Config:

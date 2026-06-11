@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 os.environ["DB_USER"] = "test"
 os.environ["DB_PASSWORD"] = "test"
 os.environ["DB_HOST"] = "localhost"
-os.environ["DB_PORT"] = "3306"
+os.environ["DB_PORT"] = "5432"
 os.environ["DB_NAME"] = "test"
 
 # Create in-memory SQLite engine
