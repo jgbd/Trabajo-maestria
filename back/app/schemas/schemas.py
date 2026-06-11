@@ -80,8 +80,8 @@ class MunicipioEstadistica(BaseModel):
     IRCA statistics for a single municipality.
     """
     municipio: str = Field(description="Municipality name")
-    lat: float = Field(description="Latitude coordinate")
-    lng: float = Field(description="Longitude coordinate")
+    lat: Optional[float] = Field(default=None, description="Latitude coordinate")
+    lng: Optional[float] = Field(default=None, description="Longitude coordinate")
     resultados: List[ResultadoIRCA] = Field(
         description="List of IRCA results by year"
     )

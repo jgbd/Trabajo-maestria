@@ -116,7 +116,7 @@ export class DashboardDataService {
       params = params.set('codigo_municipio', codigo_municipio.toString());
     }
 
-    return this.http.get<MunicipioData[]>(`${this.apiUrl}/estadisticas`, { params }).pipe(
+    return this.http.get<MunicipioData[]>(`${this.apiUrl}/estadisticas/`, { params }).pipe(
       retry({
         count: 2,
         delay: 1000,
@@ -135,7 +135,7 @@ export class DashboardDataService {
    * Rate limit: 100 requests/hour (configured in backend)
    */
   getMunicipios(): Observable<Municipio[]> {
-    return this.http.get<Municipio[]>(`${this.apiUrl}/municipios`).pipe(
+    return this.http.get<Municipio[]>(`${this.apiUrl}/municipios/`).pipe(
       retry({
         count: 2,
         delay: 1000,

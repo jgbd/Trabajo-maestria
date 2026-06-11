@@ -1,4 +1,4 @@
-from sqlalchemy import func, case, select, extract
+from sqlalchemy import func, case, Integer
 from sqlalchemy.orm import Session, aliased
 from app.models.departamento import Departamentos
 from app.models.municipio import Municipios
@@ -32,13 +32,19 @@ def obtener_resumen_irca(db: Session, anio_inicio, anio_fin, codigo_municipio):
     pm = PuntosMuestreo 
     r = Resultados
 
+    # Fecha_Toma is stored as text; derive year safely for PostgreSQL.
+    year_expr = case(
+        (func.substring(r.Fecha_Toma, 1, 4).op("~")(r"^[0-9]{4}$"), func.substring(r.Fecha_Toma, 1, 4).cast(Integer)),
+        else_=None,
+    )
+
     # Consulta con SQLAlchemy
     query = (
         db.query(
             m.Nombre.label("municipio"),
             m.Latitud.label("lat"),
             m.Longitud.label("lng"),
-            extract('year', r.Fecha_Toma).label("anio"),
+            year_expr.label("anio"),
             func.avg(r.IRCA).label("irca"),
             case(
                 (func.avg(r.IRCA) > 80, "INVIABLE SANITARIAMENTE"),
@@ -55,18 +61,18 @@ def obtener_resumen_irca(db: Session, anio_inicio, anio_fin, codigo_municipio):
         .join(r, r.Codigo_Punto_Muestreo == pm.Codigo
         ).
         filter(
-            extract('year', r.Fecha_Toma).between(anio_inicio, anio_fin),
+            year_expr.between(anio_inicio, anio_fin),
             m.Codigo == codigo_municipio if codigo_municipio else True
         )
         .group_by(
             m.Nombre,
             m.Latitud,
             m.Longitud,
-            extract('year', r.Fecha_Toma)
+            year_expr
         )
         .order_by(
             m.Nombre,
-            extract('year', r.Fecha_Toma)
+            year_expr
         )
     )
 
