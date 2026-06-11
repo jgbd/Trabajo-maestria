@@ -35,7 +35,10 @@
               "src/scss/styles.scss",
               "node_modules/leaflet/dist/leaflet.css"
             ],
-            "scripts": ["node_modules/leaflet/dist/leaflet.js"],
+            "scripts": [
+              "node_modules/leaflet/dist/leaflet.js",
+              "node_modules/leaflet.heat/dist/leaflet-heat.js"
+            ],
             "allowedCommonJsDependencies": [],
             "stylePreprocessorOptions": {
               "sass": {

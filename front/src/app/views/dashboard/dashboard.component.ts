@@ -26,8 +26,18 @@ import { ChartjsComponent } from '@coreui/angular-chartjs';
 import { DashboardDataService, MunicipioData } from '../../services/dashboard-data.service';
 import { IRCARiskThresholds } from '../../services/irca-constants';
 import { RateLimitService } from '../../services/rate-limit.service';
-import * as L from 'leaflet';
-import 'leaflet.heat';
+import type * as Leaflet from 'leaflet';
+
+declare const L: typeof Leaflet & {
+  heatLayer: (
+    latLngIntensity: [number, number, number][],
+    options?: {
+      radius?: number;
+      blur?: number;
+      maxZoom?: number;
+    }
+  ) => Leaflet.Layer;
+};
 
 interface municipio {
   Codigo: number;
