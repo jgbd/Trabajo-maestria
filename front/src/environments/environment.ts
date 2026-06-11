@@ -8,7 +8,7 @@
  */
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8000/api',
+  apiUrl: 'https://trabajo-maestria-639342137715.us-central1.run.app/api',
   apiVersion: '1.0.0',
   
   // Admin API key for protected operations (POST/PUT/DELETE)
