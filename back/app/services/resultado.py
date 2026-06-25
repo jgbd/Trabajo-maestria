@@ -77,11 +77,12 @@ def get_resultados(db: Session, pagination: PaginationParams):
         Resultados.Nivel_Riesgo,
         Resultados.Fecha_Toma,
         Municipios.Nombre.label("municipio_nombre"),
-        PuntosMuestreo.Nombre.label("punto_muestreo_nombre"),
+        PuntosMuestreo.Descripcion.label("punto_muestreo_nombre"),
     )
     .join(PuntosMuestreo, Resultados.Codigo_Punto_Muestreo == PuntosMuestreo.Codigo)
     .join(Veredas, PuntosMuestreo.Codigo_Vereda == Veredas.Codigo)
     .join(Municipios, Veredas.Codigo_Municipio == Municipios.Codigo)
+    .order_by(Municipios.Nombre, Resultados.Fecha_Toma.desc())
     )
     # Get total count before pagination
     total = query.count()
