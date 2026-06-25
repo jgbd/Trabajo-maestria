@@ -36,9 +36,9 @@
             </thead>
             <tbody>
               <tr *ngFor="let resultado of resultados">
-                <td>{{ formatDate(resultado.fecha_Analisis) }}</td>
-                <td>{{ resultado.municipio || '-' }}</td>
-                <td>{{ resultado.nombre_Punto || '-' }}</td>
+                <td>{{ formatDate(resultado.fecha_Toma) }}</td>
+                <td>{{ resultado.municipio_nombre || '-' }}</td>
+                <td>{{ resultado.punto_muestreo_nombre || '-' }}</td>
                 <td>
                   <strong 
                     [style.color]="IRCARiskThresholds.getColor(resultado.IRCA || 0)"

@@ -4,6 +4,9 @@ Resultados Service
 Handles water quality test results data with pagination support.
 """
 
+from app.models.municipio import Municipios
+from app.models.puntoMuestreo import PuntosMuestreo
+from app.models.vereda import Veredas
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from app.models.resultado import Resultados
@@ -25,7 +28,7 @@ def get_resultados(db: Session, pagination: PaginationParams):
         Tuple of (results_list, total_count)
     """
     # Build the query
-    query = db.query(
+    query = (db.query(
         func.coalesce(Resultados.Resultado_Color_Aparente, Resultados.Resultado_Color_Aparente_In_Situ)
             .label("resultado_Color_Aparente"),
         func.coalesce(Resultados.Diagnostico_Color_Aparente, Resultados.Diagnostico_Color_Aparente_In_Situ)
@@ -71,9 +74,15 @@ def get_resultados(db: Session, pagination: PaginationParams):
         Resultados.Resultado_Hierro_Total,
         Resultados.Diagnostico_Hierro_Total,
         Resultados.IRCA,
-        Resultados.Nivel_Riesgo
+        Resultados.Nivel_Riesgo,
+        Resultados.Fecha_Toma,
+        Municipios.Nombre.label("municipio_nombre"),
+        PuntosMuestreo.Nombre.label("punto_muestreo_nombre"),
     )
-    
+    .join(PuntosMuestreo, Resultados.Codigo_Punto_Muestreo == PuntosMuestreo.Codigo)
+    .join(Veredas, PuntosMuestreo.Codigo_Vereda == Veredas.Codigo)
+    .join(Municipios, Veredas.Codigo_Municipio == Municipios.Codigo)
+    )
     # Get total count before pagination
     total = query.count()
     
@@ -121,7 +130,10 @@ def get_resultados(db: Session, pagination: PaginationParams):
             "resultado_Hierro_Total": row.Resultado_Hierro_Total,
             "diagnostico_Hierro_Total": row.Diagnostico_Hierro_Total,
             "IRCA": row.IRCA,
-            "nivel_Riesgo": row.Nivel_Riesgo
+            "nivel_Riesgo": row.Nivel_Riesgo,
+            "fecha_Toma": row.Fecha_Toma,
+            "municipio_nombre": row.municipio_nombre,
+            "punto_muestreo_nombre": row.punto_muestreo_nombre,
         }
         resultados.append(resultado)
     
