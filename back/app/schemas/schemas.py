@@ -197,6 +197,10 @@ class ResultadoDetallado(BaseModel):
     IRCA: float = Field(description="IRCA index value (0-100)")
     nivel_Riesgo: str = Field(description="Risk level classification")
     
+    fecha_Toma: datetime = Field(description="Fecha de toma")
+    municipio_nombre: str = Field(description="Municipio name")
+    punto_muestreo_nombre: str = Field(description="Punto de muestreo name")
+    
     class Config:
         json_schema_extra = {
             "example": {

@@ -77,9 +77,9 @@ export interface ResultadoDetallado {
   diagnostico_Escherichia_coli?: string;
   IRCA?: number;
   nivel_Riesgo?: string;
-  fecha_Analisis?: string;
-  municipio?: string;
-  nombre_Punto?: string;
+  fecha_Toma?: string;
+  municipio_nombre?: string;
+  punto_muestreo_nombre?: string;
 }
 
 @Injectable({
